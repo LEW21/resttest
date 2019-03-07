@@ -1,0 +1,10 @@
+[style]
+based_on_style = pep8
+indent_width = 4
+continuation_align_style = valign-right
+continuation_indent_width = 4
+column_limit = 9999
+space_between_ending_comma_and_closing_bracket = false
+spaces_before_comment = 1
+spaces_around_default_or_named_assign = true
+
