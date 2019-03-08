@@ -62,6 +62,22 @@ class HTTP400_BadRequest(HTTPResponse):
 BadRequest = HTTP400_BadRequest
 
 
+class HTTP401_NotAuthenticated(HTTPResponse):
+    code = 401
+    reason = 'Not Authenticated'
+
+
+NotAuthenticated = HTTP401_NotAuthenticated
+
+
+class HTTP403_Forbidden(HTTPResponse):
+    code = 403
+    reason = 'Forbidden'
+
+
+Forbidden = HTTP403_Forbidden
+
+
 class HTTP404_NotFound(HTTPResponse):
     code = 404
     reason = 'Not Found'
@@ -83,14 +99,27 @@ class HTTP500_InternalServerError(HTTPResponse):
     reason = 'Internal Server Error'
 
 
+InternalServerError = HTTP500_InternalServerError
+
+
+class HTTP501_NotImplemented(HTTPResponse):
+    code = 501
+    reason = 'Not Implemented'
+
+
+NotImplemented = HTTP501_NotImplemented
+
 responses = {
     200: HTTP200_OK,
     201: HTTP201_Created,
     204: HTTP204_NoContent,
     400: HTTP400_BadRequest,
+    401: HTTP401_NotAuthenticated,
+    403: HTTP403_Forbidden,
     404: HTTP404_NotFound,
     405: HTTP405_MethodNotAllowed,
     500: HTTP500_InternalServerError,
+    501: HTTP501_NotImplemented,
 }
 
 
