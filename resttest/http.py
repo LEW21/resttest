@@ -127,6 +127,14 @@ class HTTPSession:
     def __init__(self):
         self._requests_session = requests.Session()
 
+    @property
+    def headers(self):
+        return self._requests_session.headers
+
+    @property
+    def cookies(self):
+        return self._requests_session.cookies
+
     def request(self, method, url, data = None) -> HTTPResponse:
         resp = self._requests_session.request(method, url, json = data)
         response = responses[resp.status_code](resp.json() if resp.status_code not in [204, 500] else None)
