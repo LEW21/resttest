@@ -8,7 +8,7 @@ for module in pkgutil.iter_modules(['tests']):
         continue
 
     try:
-        mod = importlib.import_module(module.name)
+        mod = importlib.import_module('tests.' + module.name)
     except ImportError as e:
         print(f'{module.name}: {e}')
     else:
