@@ -227,6 +227,8 @@ class Context:
             for substmt in pre_catch:
                 if str(substmt).replace(' ', '') == '1/0':
                     break
+                if isinstance(substmt, redbaron.RaiseNode):
+                    break
                 self.eval(substmt)
 
             catch, = expr.excepts
