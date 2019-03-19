@@ -68,7 +68,7 @@ class Context:
         value.var_name = name
 
     def eval(self, expr):
-        if isinstance(expr, redbaron.EndlNode):
+        if isinstance(expr, redbaron.EndlNode) or isinstance(expr, redbaron.PassNode):
             return
 
         if isinstance(expr, redbaron.StringNode) or isinstance(expr, redbaron.IntNode):
