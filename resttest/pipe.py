@@ -25,6 +25,13 @@ class matches:
             return value is not None and all(value[k] | matches(p) for k, p in enumerate(self.pattern))
         elif isinstance(self.pattern, HTTPResponse):
             return value.code == self.pattern.code and value.data | matches(self.pattern.data)
+        elif isinstance(self.pattern, type):
+            try:
+                self.pattern(value)
+            except ValueError:
+                return False
+            else:
+                return True
         elif callable(self.pattern):
             return self.pattern(value)
         else:
