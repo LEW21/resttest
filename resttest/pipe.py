@@ -20,7 +20,7 @@ class matches:
         if isinstance(self.pattern, re.Pattern):
             return self.pattern.fullmatch(value)
         elif isinstance(self.pattern, dict):
-            return value is not None and all(value[k] | matches(p) for k, p in self.pattern.items())
+            return value is not None and all(value.get(k) | matches(p) for k, p in self.pattern.items())
         elif isinstance(self.pattern, list):
             return value is not None and all(value[k] | matches(p) for k, p in enumerate(self.pattern))
         elif isinstance(self.pattern, HTTPResponse):
