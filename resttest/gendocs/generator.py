@@ -34,6 +34,8 @@ _builtins = {
     'dict': dict,
     'list': list,
     'str': str,
+    'int': int,
+    'bool': bool,
     'True': True,
     'False': False,
 }
