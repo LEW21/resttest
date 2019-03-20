@@ -222,15 +222,13 @@ class Context:
             return
 
         if isinstance(expr, redbaron.TryNode):
-            assert getattr(expr, 'else') == None
             assert getattr(expr, 'finally') == None
+
+            if getattr(expr, 'else') is None:
+                raise RuntimeError('You should always specify else clause in try-except statements.')
 
             pre_catch = expr.value
             for substmt in pre_catch:
-                if str(substmt).replace(' ', '') == '1/0':
-                    break
-                if isinstance(substmt, redbaron.RaiseNode):
-                    break
                 self.eval(substmt)
 
             catch, = expr.excepts
