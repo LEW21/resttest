@@ -83,6 +83,9 @@ class Context:
         if isinstance(expr, redbaron.nodes.DictNode):
             return {self.eval(kv.key): self.eval(kv.value) for kv in expr.value}
 
+        if isinstance(expr, redbaron.BinaryOperatorNode):
+            return eval('a' + expr.value + 'b', {'a': self.eval(expr.first), 'b': self.eval(expr.second)})
+
         trailers = atomtrailers(expr)
         if trailers:
             name_node, *rest = trailers

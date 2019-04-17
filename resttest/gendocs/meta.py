@@ -1,5 +1,6 @@
 import collections.abc
 import typing
+from datetime import timedelta
 
 
 class Dummy:
@@ -39,6 +40,7 @@ PURE_FUNCTIONS = {
     list,
     set,
     dict,
+    timedelta,
 }
 
 
@@ -90,6 +92,12 @@ class Instance:
                 if self.of.__module__ == 'typing':
                     return f'<{str(self.of)} instance>'
                 raise
+
+    def __add__(self, other):
+        return Instance(self.of)
+
+    def __sub__(self, other):
+        return Instance(self.of)
 
 
 class IterableInstance(Instance):
