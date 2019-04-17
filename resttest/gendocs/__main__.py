@@ -1,7 +1,10 @@
 import importlib
 import pkgutil
 
+import resttest
 from resttest.gendocs.generator import render_module
+
+resttest.BASE_URL = '/'
 
 for module in pkgutil.iter_modules(['tests']):
     if not module.name.startswith('test_'):
