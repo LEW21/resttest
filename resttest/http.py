@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 import requests
 
 
@@ -141,6 +144,13 @@ responses = {
 }
 
 
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat().replace('+00:00', 'Z')
+        return super().default(obj)
+
+
 class HTTPSession:
     def __init__(self):
         self._requests_session = requests.Session()
@@ -154,8 +164,14 @@ class HTTPSession:
         return self._requests_session.cookies
 
     def request(self, method, url, data = None) -> HTTPResponse:
-        resp = self._requests_session.request(method, url, json = data)
-        response = responses[resp.status_code](resp.json() if resp.status_code not in [204, 500] else None)
+        resp = self._requests_session.request(
+            method,
+            url,
+            headers = {'Content-Type': 'application/json'},
+            data = JSONEncoder().encode(data),
+            allow_redirects = False,
+        )
+        response = responses[resp.status_code](resp.json() if resp.content else None)
 
         if response.code >= 400:
             raise response

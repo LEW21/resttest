@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from resttest.http import HTTPResponse
 
@@ -34,6 +35,8 @@ class matches:
                 return True
         elif callable(self.pattern):
             return self.pattern(value)
+        elif isinstance(self.pattern, datetime):
+            return value == self.pattern.isoformat().replace('+00:00', 'Z')
         else:
             return value == self.pattern
 
