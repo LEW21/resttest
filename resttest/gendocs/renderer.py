@@ -21,6 +21,7 @@ class Renderer:
         self.print(text)
 
     def write_var(self, var, desc):
+        return
         self.print()
         self.print(f'* `{var}`: {desc}')
 
