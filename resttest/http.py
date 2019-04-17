@@ -54,6 +54,14 @@ class HTTP204_NoContent(HTTPResponse):
 NoContent = HTTP204_NoContent
 
 
+class HTTP303_SeeOther(HTTPResponse):
+    code = 303
+    reason = 'See Other'
+
+
+SeeOther = HTTP303_SeeOther
+
+
 class HTTP400_BadRequest(HTTPResponse):
     code = 400
     reason = 'Bad Request'
@@ -94,6 +102,14 @@ class HTTP405_MethodNotAllowed(HTTPResponse):
 MethodNotAllowed = HTTP405_MethodNotAllowed
 
 
+class HTTP409_Conflict(HTTPResponse):
+    code = 409
+    reason = 'Conflict'
+
+
+Conflict = HTTP405_MethodNotAllowed
+
+
 class HTTP500_InternalServerError(HTTPResponse):
     code = 500
     reason = 'Internal Server Error'
@@ -113,11 +129,13 @@ responses = {
     200: HTTP200_OK,
     201: HTTP201_Created,
     204: HTTP204_NoContent,
+    303: HTTP303_SeeOther,
     400: HTTP400_BadRequest,
     401: HTTP401_NotAuthenticated,
     403: HTTP403_Forbidden,
     404: HTTP404_NotFound,
     405: HTTP405_MethodNotAllowed,
+    409: HTTP409_Conflict,
     500: HTTP500_InternalServerError,
     501: HTTP501_NotImplemented,
 }
