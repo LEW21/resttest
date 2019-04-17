@@ -296,6 +296,7 @@ def test_name_to_title(name):
 def render_module(mod):
     global renderer
     mod_name = mod.__name__.split('.')[-1]
+    print(mod_name)
     title = test_name_to_title(mod_name)
     output_file = f'docs/{mod_name[5:]}.md'
     renderer = Renderer(title, output_file)
