@@ -117,9 +117,9 @@ class Context:
                     if getattr(callable, '__func__', None) in [resttest.HTTPSession.get, resttest.HTTPSession.post, resttest.HTTPSession.patch, resttest.HTTPSession.put, resttest.HTTPSession.delete]:
                         method = callable.__func__.__name__.upper()
                         url = trailer.value[0].value
-                        try:
+                        if method in ['POST', 'PATCH', 'PUT']:
                             data = trailer.value[1].value
-                        except IndexError:
+                        else:
                             data = None
 
                         if data:
