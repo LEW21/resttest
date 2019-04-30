@@ -3,24 +3,14 @@ from datetime import datetime
 
 import requests
 
-
-class NiceDict(dict):
-    def __init__(self, normal_dict):
-        super().__init__([(k, (NiceDict(v) if isinstance(v, dict) else v)) for k, v in normal_dict.items()])
-
-    def __getattr__(self, attr):
-        try:
-            return self[attr]
-        except KeyError:
-            raise AttributeError(attr)
+from resttest.schema import make_schemaless_object, unserialize
 
 
 class HTTPResponse(Exception):
     """HTTP response"""
 
     def __init__(self, data):
-        self.data = NiceDict(data) if isinstance(data, dict) else data
-        #self.data = data
+        self.data = data
 
 
 class HTTP200_OK(HTTPResponse):
@@ -163,7 +153,7 @@ class HTTPSession:
     def cookies(self):
         return self._requests_session.cookies
 
-    def request(self, method, url, data = None) -> HTTPResponse:
+    def request(self, method, url, data = None, return_type = None) -> HTTPResponse:
         resp = self._requests_session.request(
             method,
             url,
@@ -171,24 +161,30 @@ class HTTPSession:
             data = JSONEncoder().encode(data),
             allow_redirects = False,
         )
-        response = responses[resp.status_code](resp.json() if resp.content else None)
+
+        if return_type and resp.status_code < 400:
+            resp_content = unserialize(return_type, resp.json())
+        else:
+            resp_content = make_schemaless_object(resp.json()) if resp.content else None
+
+        response = responses[resp.status_code](resp_content)
 
         if response.code >= 400:
             raise response
 
         return response
 
-    def get(self, url) -> HTTPResponse:
-        return self.request('GET', url)
+    def get(self, url, return_type = None) -> HTTPResponse:
+        return self.request('GET', url, return_type = return_type)
 
-    def post(self, url, data) -> HTTPResponse:
-        return self.request('POST', url, data)
+    def post(self, url, data, return_type = None) -> HTTPResponse:
+        return self.request('POST', url, data, return_type = return_type)
 
-    def patch(self, url, data) -> HTTPResponse:
-        return self.request('PATCH', url, data)
+    def patch(self, url, data, return_type = None) -> HTTPResponse:
+        return self.request('PATCH', url, data, return_type = return_type)
 
-    def put(self, url, data) -> HTTPResponse:
-        return self.request('PUT', url, data)
+    def put(self, url, data, return_type = None) -> HTTPResponse:
+        return self.request('PUT', url, data, return_type = return_type)
 
-    def delete(self, url) -> HTTPResponse:
-        return self.request('DELETE', url)
+    def delete(self, url, return_type = None) -> HTTPResponse:
+        return self.request('DELETE', url, return_type = return_type)

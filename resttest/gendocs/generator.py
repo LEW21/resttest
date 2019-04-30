@@ -301,6 +301,10 @@ def render_module(mod):
     output_file = f'docs/{mod_name[5:]}.md'
     renderer = Renderer(title, output_file)
 
+    Object = getattr(mod, 'Object', None)
+    if Object:
+        renderer.write_object(Object)
+
     for name, value in mod.__dict__.items():
         if not name.startswith('test_'):
             continue

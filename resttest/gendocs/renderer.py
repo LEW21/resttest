@@ -77,3 +77,48 @@ class Renderer:
 
     def write_http_response(self, response):
         self.write_http_message(f'{response.code} {response.reason}', response.data)
+
+    def write_object(self, object):
+        schema = object.__resttest_schema__
+        self.start_case(f'The {schema.title} object')
+        self.print(getattr(schema, 'description', ''))
+        self.print()
+
+        self.print('### Properties')
+        self.print('Name | Type | Description')
+        self.print('- | - | -')
+        for prop_name, prop_schema in schema.properties.items():
+            prop_type = get_nice_type(prop_schema)
+            self.print(f'{prop_name} | {prop_type} | {getattr(prop_schema, "description", "")}')
+
+
+def get_nice_type(schema):
+    undefined = object()
+
+    ref = getattr(schema, '$ref', undefined)
+    if ref is not undefined:
+        assert ref.startswith('#/definitions/')
+        def_name = ref[len('#/definitions/'):]
+        return def_name
+
+    const = getattr(schema, 'const', undefined)
+    if const is not undefined:
+        return json.dumps(const)
+
+    anyOf = getattr(schema, 'anyOf', undefined)
+    if anyOf is not undefined:
+        return ' or '.join(get_nice_type(subschema) for subschema in anyOf)
+
+    title = getattr(schema, 'title', undefined)
+    if title is not undefined:
+        return title
+
+    format = getattr(schema, 'format', undefined)
+    if format is not undefined:
+        return format
+
+    type = getattr(schema, 'type', '')
+    if type == 'array':
+        return f'array&lt;{get_nice_type(schema.items)}&gt;'
+
+    return type
