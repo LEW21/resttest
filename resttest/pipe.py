@@ -12,10 +12,13 @@ def pipify(func):
     return func
 
 
+undefined = object()
+
+
 @pipify
 class matches:
-    def __init__(self, pattern):
-        self.pattern = pattern
+    def __init__(self, pattern = undefined, **kwargs):
+        self.pattern = pattern if pattern is not undefined else kwargs
 
     def __call__(self, value):
         if isinstance(self.pattern, re.Pattern):
