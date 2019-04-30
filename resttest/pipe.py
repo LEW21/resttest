@@ -44,7 +44,10 @@ class matches:
         elif callable(self.pattern):
             return self.pattern(value)
         elif isinstance(self.pattern, datetime):
-            return value == self.pattern.isoformat().replace('+00:00', 'Z')
+            if isinstance(value, datetime):
+                return value == self.pattern
+            else:
+                return value == self.pattern.isoformat().replace('+00:00', 'Z')
         else:
             return value == self.pattern
 
