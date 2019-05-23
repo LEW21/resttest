@@ -6,7 +6,7 @@ from warnings import warn
 
 from pkg_resources import resource_string
 from typing_extensions import Literal
-from yaml import load
+from yaml import safe_load
 
 ALWAYS_DICTS = {'properties', 'definitions'}
 
@@ -176,7 +176,7 @@ def schema_to_type(top_level_schema: Schema, chosen_schema: Schema = None):
     return SchemaDocument(top_level_schema).to_type(chosen_schema or top_level_schema)
 
 
-Schema = schema_to_type(make_schemaless_object(load(resource_string(__name__, 'schema.yaml')), ALWAYS_DICTS))
+Schema = schema_to_type(make_schemaless_object(safe_load(resource_string(__name__, 'schema.yaml')), ALWAYS_DICTS))
 
 
 def unserialize(Object, data):
