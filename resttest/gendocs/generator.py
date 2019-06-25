@@ -251,10 +251,11 @@ class Context:
         raise NotImplementedError(f'{type(expr)} is too hard.')
 
     def try_eval(self, expr):
+        assert expr is not None
         try:
             return self.eval(expr)
         except Exception as e:
-            print("try_eval failed", type(e), e)
+            print("try_eval failed", type(e), e, type(expr), expr)
             pass
 
         return expr
