@@ -8,7 +8,7 @@ from pkg_resources import resource_string
 from typing_extensions import Literal
 from yaml import safe_load
 
-ALWAYS_DICTS = {'properties', 'definitions'}
+ALWAYS_DICTS = {'definitions', 'properties'}
 
 
 def make_schemaless_object(data, always_dicts = set(), key = None):
@@ -35,12 +35,20 @@ class SchemalessObject:
         return str(self._data)
 
 
+class Undefined:
+    def __repr__(self):
+        return 'undefined'
+
+
 class SchemaDocument:
     def __init__(self, schema: Schema):
         self.document = schema
+        if isinstance(self.document.definitions, SchemalessObject):
+            self.document.definitions = self.document.definitions._data
 
     def to_type(self, schema: Schema, override_type = None):
-        undefined = object()
+        assert not isinstance(schema, dict)
+        undefined = Undefined()
 
         ref = getattr(schema, '$ref', undefined)
         if ref is not undefined:
@@ -93,6 +101,8 @@ class SchemaDocument:
                 raise NotImplementedError('Handling both properties and additionalProperties on a single object is not implemented.')
 
             if properties is not undefined:
+                if isinstance(properties, SchemalessObject):
+                    properties = properties._data
                 property_types = dict()
                 default_values = dict()
                 for prop_name, prop_schema in properties.items():
@@ -141,6 +151,7 @@ class SchemaDocument:
             if additionalProperties is not undefined:
                 return Mapping[str, self.to_type(additionalProperties)]
 
+            warn(f"Untyped object: {schema}", UserWarning, 2)
             return dict
 
         if schema_type == 'array':
@@ -152,8 +163,10 @@ class SchemaDocument:
 
                 return Sequence[self.to_type(items)]
 
+            warn(f"Untyped array: {schema}", UserWarning, 2)
             return list
 
+        warn(f"Untyped value: {schema}", UserWarning, 2)
         return Any
 
 
@@ -161,7 +174,7 @@ def schema_to_type(top_level_schema: Schema, chosen_schema: Schema = None):
     return SchemaDocument(top_level_schema).to_type(chosen_schema or top_level_schema)
 
 
-Schema = schema_to_type(make_schemaless_object(safe_load(resource_string(__name__, 'schema.yaml')), ALWAYS_DICTS))
+Schema = schema_to_type(make_schemaless_object(safe_load(resource_string(__name__, 'schema.yaml'))))
 
 
 def unserialize(Object, data):
@@ -213,7 +226,7 @@ def unserialize(Object, data):
 
         unknown_data = set(data.keys()) - set(Object.__annotations__.keys())
         if unknown_data != set():
-            warn(f'{Object.__name__} has unknown properties: {", ".join(unknown_data)}')
+            warn(f'{Object.__name__} has unknown properties: {", ".join(unknown_data)}', UserWarning, 2)
 
         missing_data = set(Object.__annotations__.keys()) - set(data.keys()) - set(Object.__dict__.keys())
         if missing_data != set():
