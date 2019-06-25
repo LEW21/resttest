@@ -276,3 +276,22 @@ def unserialize(Object, data):
         return data
 
     raise ValueError(Object)
+
+
+def serialize(obj):
+    if obj is None or isinstance(obj, bool) or isinstance(obj, int) or isinstance(obj, float) or isinstance(obj, str):
+        return obj
+
+    if isinstance(obj, datetime):
+        return obj.isoformat().replace('+00:00', 'Z')
+
+    if getattr(type(obj), '__resttest_plain__', False):
+        return serialize(obj.__dict__)
+
+    if isinstance(obj, dict):
+        return {k: serialize(v) for k, v in obj.items()}
+
+    if isinstance(obj, list):
+        return [serialize(v) for v in obj]
+
+    raise ValueError()

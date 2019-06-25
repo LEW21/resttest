@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 
-from resttest.schema import make_schemaless_object, unserialize
+from resttest.schema import make_schemaless_object, serialize, unserialize
 
 
 class HTTPResponse(Exception):
@@ -134,13 +134,6 @@ responses = {
 }
 
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat().replace('+00:00', 'Z')
-        return super().default(obj)
-
-
 class HTTPSession:
     def __init__(self):
         self._requests_session = requests.Session()
@@ -158,7 +151,7 @@ class HTTPSession:
             method,
             url,
             headers = {'Content-Type': 'application/json'},
-            data = JSONEncoder().encode(data),
+            data = json.dumps(serialize(data)),
             allow_redirects = True,
         )
 
