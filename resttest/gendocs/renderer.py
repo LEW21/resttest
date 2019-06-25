@@ -73,6 +73,10 @@ class Renderer:
         self.print('```')
 
     def write_http_request(self, method, url, data):
+        if hasattr(data, '__resttest_plain__'):
+            data = data.__dict__
+        else:
+            data = data
         self.write_http_message(f'{method} {self._string(url)}', data)
 
     def write_http_response(self, response):

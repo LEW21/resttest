@@ -48,7 +48,7 @@ PURE_FUNCTIONS = {
 
 
 def is_pure(callable):
-    return callable in PURE_FUNCTIONS or getattr(callable, 'pure', False) == True
+    return callable in PURE_FUNCTIONS or getattr(callable, 'pure', False) == True or getattr(callable, '__resttest_plain__', False) == True
 
 
 class BoundProperty:
