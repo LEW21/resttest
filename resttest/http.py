@@ -159,7 +159,7 @@ class HTTPSession:
             url,
             headers = {'Content-Type': 'application/json'},
             data = JSONEncoder().encode(data),
-            allow_redirects = False,
+            allow_redirects = True,
         )
 
         if return_type and resp.status_code < 400:
