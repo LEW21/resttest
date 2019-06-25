@@ -34,21 +34,6 @@ class SchemalessObject:
     def __str__(self):
         return str(self._data)
 
-    def get(self, key, default = None):
-        warn('SchemalessObject().get("attr") is deprecated; use SchemalessObject().attr instead.', DeprecationWarning, 2)
-        return self._data.get(key, default)
-
-    def __getitem__(self, key):
-        warn('SchemalessObject()["attr"] is deprecated; use SchemalessObject().attr instead.', DeprecationWarning, 2)
-        return self._data[key]
-
-    def __eq__(self, other):
-        if isinstance(other, dict):
-            warn('SchemalessObject() == dict() is deprecated; use resttest.matches instead.', DeprecationWarning, 2)
-            return self._data == other
-
-        return super().__eq__(other)
-
 
 class SchemaDocument:
     def __init__(self, schema: Schema):
