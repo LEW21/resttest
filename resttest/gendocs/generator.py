@@ -181,34 +181,24 @@ class Context:
                     return
 
                 operator = str(test.value)
-                right_expr = atomtrailers(test.second)
+                response = self.try_eval(test.second)
 
-                if operator == '|':
-                    operator_expr, _args = atomcall(right_expr)
-                    _arg, = _args
+                if operator == '|' and isinstance(response, resttest.matches):
+                    operator = resttest.matches
+                    response = response.pattern
 
-                    operator = self.eval(operator_expr)
-                    right_expr = atomtrailers(_arg.value)
-
-                response_class = None
                 if data:
+                    response_data = response
+
                     if self.http_response.of != resttest.HTTPResponse:
+                        # We are in an except block
                         response_class = self.http_response.of
-                else:
-                    _response_class, _args = atomcall(right_expr)
-                    response_class = self.eval(_response_class)
-                    _arg, = _args
-                    right_expr = atomtrailers(_arg.value)
-
-                response_data = self.try_eval(right_expr)
-
-                if not response_class:
-                    if response_data is not None:
+                    elif response_data is not None:
                         response_class = resttest.HTTP200_OK
                     else:
                         response_class = resttest.HTTP204_NoContent
 
-                response = response_class(response_data)
+                    response = response_class(response_data)
 
                 renderer.write_http_response(response)
                 return

@@ -2,6 +2,7 @@ import collections.abc
 import typing
 from datetime import timedelta
 
+from resttest import matches, http
 
 class Dummy:
     def dummy(self):
@@ -41,6 +42,8 @@ PURE_FUNCTIONS = {
     set,
     dict,
     timedelta,
+    matches,
+    *http.responses.values(),
 }
 
 
