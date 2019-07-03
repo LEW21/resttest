@@ -51,6 +51,9 @@ class matches:
         else:
             return value == self.pattern
 
+    def __repr__(self):
+        return f'matches({repr(self.pattern)})'
+
 
 @pipify
 class not_equal_to:
