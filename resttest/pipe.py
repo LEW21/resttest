@@ -1,5 +1,7 @@
 import re
 from datetime import datetime
+from itertools import permutations
+from warnings import warn
 
 from resttest.http import HTTPResponse
 
@@ -30,8 +32,27 @@ class matches:
                 return all(value.get(k) | matches(p) for k, p in self.pattern.items())
             else:
                 return all(getattr(value, k) | matches(p) for k, p in self.pattern.items())
-        elif isinstance(self.pattern, list):
-            return value is not None and all(value[k] | matches(p) for k, p in enumerate(self.pattern))
+        elif isinstance(self.pattern, list) or isinstance(self.pattern, tuple):
+            if value is None:
+                return False
+            pattern = self.pattern
+            if pattern and pattern[-1] == ...:
+               pattern = pattern[:-1]
+            else:
+                if len(value) != len(self.pattern):
+                    warn(f"List length does not match - append ... to the pattern.", UserWarning, 2)
+            return all(value[k] | matches(p) for k, p in enumerate(pattern))
+        elif isinstance(self.pattern, set):
+            if value is None:
+                return False
+            if len(value) != len(self.pattern):
+                return False
+            value = list(value)
+            for perm in permutations(self.pattern):
+                print(perm)
+                if value | matches(perm):
+                    return True
+            return False
         elif isinstance(self.pattern, HTTPResponse):
             return value.code == self.pattern.code and value.data | matches(self.pattern.data)
         elif isinstance(self.pattern, type):
