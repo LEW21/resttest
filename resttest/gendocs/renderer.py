@@ -57,6 +57,8 @@ class Renderer:
             return f'<{value}>'
 
     def _dump(self, value):
+        if value == ...:
+            return '...'
         try:
             return json.dumps(value)
         except:

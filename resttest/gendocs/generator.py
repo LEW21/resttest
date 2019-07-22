@@ -71,6 +71,9 @@ class Context:
         if isinstance(expr, redbaron.EndlNode) or isinstance(expr, redbaron.PassNode):
             return
 
+        if isinstance(expr, redbaron.EllipsisNode):
+            return ...
+
         if isinstance(expr, redbaron.StringNode) or isinstance(expr, redbaron.IntNode):
             return eval(expr.value)
 
