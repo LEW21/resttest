@@ -80,6 +80,9 @@ class Context:
         if isinstance(expr, redbaron.nodes.ListNode):
             return [self.eval(node) for node in expr.value]
 
+        if isinstance(expr, redbaron.nodes.SetNode):
+            return {self.eval(node) for node in expr.value}
+
         if isinstance(expr, redbaron.nodes.DictNode):
             return {self.eval(kv.key): self.eval(kv.value) for kv in expr.value}
 
