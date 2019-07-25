@@ -158,7 +158,7 @@ class HTTPSession:
         if return_type and resp.status_code < 400:
             resp_content = unserialize(return_type, resp.json())
         else:
-            resp_content = make_schemaless_object(resp.json()) if resp.content else None
+            resp_content = make_schemaless_object(resp.json()) if resp.content and resp.headers.get('Content-Type') == 'application/json'else None
 
         response = responses[resp.status_code](resp_content)
 
