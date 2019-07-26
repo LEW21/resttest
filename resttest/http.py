@@ -156,9 +156,14 @@ class HTTPSession:
         )
 
         if return_type and resp.status_code < 400:
-            resp_content = unserialize(return_type, resp.json()) if not ignore_response_data else None
+            resp_content = unserialize(return_type, resp.json()) if not ignore_response_data else ...
         else:
-            resp_content = make_schemaless_object(resp.json()) if resp.content and not ignore_error_data else None
+            if ignore_error_data:
+                resp_content = ...
+            elif not resp.content:
+                resp_content = None
+            else:
+                resp_content = make_schemaless_object(resp.json())
 
         response = responses[resp.status_code](resp_content)
 
