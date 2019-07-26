@@ -146,7 +146,7 @@ class HTTPSession:
     def cookies(self):
         return self._requests_session.cookies
 
-    def request(self, method, url, data = None, return_type = None) -> HTTPResponse:
+    def request(self, method, url, data = None, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
         resp = self._requests_session.request(
             method,
             url,
@@ -156,9 +156,9 @@ class HTTPSession:
         )
 
         if return_type and resp.status_code < 400:
-            resp_content = unserialize(return_type, resp.json())
+            resp_content = unserialize(return_type, resp.json()) if not ignore_response_data else None
         else:
-            resp_content = make_schemaless_object(resp.json()) if resp.content and resp.headers.get('Content-Type') == 'application/json'else None
+            resp_content = make_schemaless_object(resp.json()) if resp.content and not ignore_error_data else None
 
         response = responses[resp.status_code](resp_content)
 
@@ -167,17 +167,17 @@ class HTTPSession:
 
         return response
 
-    def get(self, url, return_type = None) -> HTTPResponse:
-        return self.request('GET', url, return_type = return_type)
+    def get(self, url, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
+        return self.request('GET', url, return_type = return_type, ignore_response_data = ignore_response_data, ignore_error_data = ignore_error_data)
 
-    def post(self, url, data, return_type = None) -> HTTPResponse:
-        return self.request('POST', url, data, return_type = return_type)
+    def post(self, url, data, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
+        return self.request('POST', url, data, return_type = return_type, ignore_response_data = ignore_response_data, ignore_error_data = ignore_error_data)
 
-    def patch(self, url, data, return_type = None) -> HTTPResponse:
-        return self.request('PATCH', url, data, return_type = return_type)
+    def patch(self, url, data, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
+        return self.request('PATCH', url, data, return_type = return_type, ignore_response_data = ignore_response_data, ignore_error_data = ignore_error_data)
 
-    def put(self, url, data, return_type = None) -> HTTPResponse:
-        return self.request('PUT', url, data, return_type = return_type)
+    def put(self, url, data, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
+        return self.request('PUT', url, data, return_type = return_type, ignore_response_data = ignore_response_data, ignore_error_data = ignore_error_data)
 
-    def delete(self, url, return_type = None) -> HTTPResponse:
-        return self.request('DELETE', url, return_type = return_type)
+    def delete(self, url, return_type = None, ignore_response_data = False, ignore_error_data = False) -> HTTPResponse:
+        return self.request('DELETE', url, return_type = return_type, ignore_response_data = ignore_response_data, ignore_error_data = ignore_error_data)
