@@ -150,8 +150,8 @@ class HTTPSession:
         resp = self._requests_session.request(
             method,
             url,
-            headers = {'Content-Type': 'application/json'},
-            data = json.dumps(serialize(data)),
+            headers = {'Content-Type': 'application/json'} if data is not None else {},
+            data = json.dumps(serialize(data)) if data is not None else None,
             allow_redirects = True,
         )
 
